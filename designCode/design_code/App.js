@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 
-import HomeScreen from './screens/HomeScreen';
+import AppNavigator from './navigator/AppNavigator';
 
 const initialState = {
   menuState: '',
@@ -33,7 +33,7 @@ const store = createStore(rootReducer);
 
 const App = () => (
   <Provider store={store}>
-    <HomeScreen />
+    <AppNavigator />
   </Provider>
 );
 

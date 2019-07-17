@@ -5,7 +5,6 @@ import { Icon } from 'expo';
 import { connect } from 'react-redux';
 
 import Card from '../components/Card';
-import avatarImage from '../assets/avatar.jpg';
 import { logos, cards, courses } from '../components/data';
 import Logo from '../components/Logo';
 import Course from '../components/Course';
@@ -13,6 +12,10 @@ import Menu from '../components/Menu';
 import Avatar from '../components/Avatar';
 
 class HomeScreen extends Component {
+  static navigationOptions = {
+    header: null
+  }
+
   state = {
     menuScale: new Animated.Value(1),
     menuOpacity: new Animated.Value(1),
@@ -120,14 +123,15 @@ class HomeScreen extends Component {
               >
 
                 {cards.map(card => (
-                  <Card
-                    background={card.background}
-                    title={card.title}
-                    logo={card.logo}
-                    caption={card.caption}
-                    subtitle={card.subtitle}
-                    key={card.title}
-                  />
+                  <TouchableOpacity key={card.title} onPress={() => this.props.navigation.push('Section')}>
+                    <Card
+                      background={card.background}
+                      title={card.title}
+                      logo={card.logo}
+                      caption={card.caption}
+                      subtitle={card.subtitle}
+                    />
+                  </TouchableOpacity>
                 ))}
               </ScrollView>
 
@@ -186,18 +190,11 @@ const Subtitle = styled.Text`
       color: #B8BECE;
     `;
 
-// const Avatar = styled.Image`
-//       width: 44px;
-//       height: 44px;
-//       border-radius: 22px;
-//       background: black;
-//       box-shadow: 10px 5px 5px black;
-//     `;
-
 const Container = styled.View`
       flex: 1;
       background-color: #f0f3f5;
-      border-radius: 10px;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
      `;
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
