@@ -10,15 +10,32 @@ import { logos, cards, courses } from '../components/data';
 import Logo from '../components/Logo';
 import Course from '../components/Course';
 import Menu from '../components/Menu';
+import Avatar from '../components/Avatar';
 
 class HomeScreen extends Component {
   state = {
     menuScale: new Animated.Value(1),
     menuOpacity: new Animated.Value(1),
+    user: {},
+    isUserLoading: true,
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    this.toggleMenu();
+  componentDidMount() {
+    fetch('https://uinames.com/api/?ext')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          isUserLoading: false,
+          user: res,
+        })
+      });
+  }
+
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.menuState !== this.props.menuState) {
+      this.toggleMenu();
+    }
   }
 
   toggleMenu = () => {
@@ -42,7 +59,12 @@ class HomeScreen extends Component {
 
   render() {
     const { openMenu } = this.props;
-    const { menuScale, menuOpacity } = this.state;
+    const {
+      menuScale,
+      menuOpacity,
+      user: { photo, name },
+      isUserLoading,
+    } = this.state;
 
     return (
       <RootContainer>
@@ -59,10 +81,10 @@ class HomeScreen extends Component {
                     left: 20
                   }}
                 >
-                  <Avatar source={avatarImage} />
+                  <Avatar photo={photo} isLoading={isUserLoading} />
                 </TouchableOpacity>
                 <Title>What it do,</Title>
-                <Name>Babee</Name>
+                <Name>{isUserLoading ? 'Babeeee' : name} </Name>
                 <Icon.Ionicons
                   name="ios-notifications"
                   size={32}
@@ -164,13 +186,13 @@ const Subtitle = styled.Text`
       color: #B8BECE;
     `;
 
-const Avatar = styled.Image`
-      width: 44px;
-      height: 44px;
-      border-radius: 22px;
-      background: black;
-      box-shadow: 10px 5px 5px black;
-    `;
+// const Avatar = styled.Image`
+//       width: 44px;
+//       height: 44px;
+//       border-radius: 22px;
+//       background: black;
+//       box-shadow: 10px 5px 5px black;
+//     `;
 
 const Container = styled.View`
       flex: 1;

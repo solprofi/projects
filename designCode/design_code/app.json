@@ -24,7 +24,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.solprofi.designCode"
+    },
+    "android": {
+      "package": "com.solprofi.designCode"
     }
   }
 }
