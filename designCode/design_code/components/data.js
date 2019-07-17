@@ -95,3 +95,26 @@ export const courses = [
       'Complete guide to designing a site using a collaborative design tool',
   },
 ];
+
+export const menuItems = [
+  {
+    icon: 'ios-settings',
+    title: 'Account',
+    text: 'settings',
+  },
+  {
+    icon: 'ios-card',
+    title: 'Billing',
+    text: 'payments',
+  },
+  {
+    icon: 'ios-compass',
+    title: 'Learn React',
+    text: 'start course',
+  },
+  {
+    icon: 'ios-exit',
+    title: 'Log out',
+    text: 'see you soon!',
+  },
+];
