@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Animated, TouchableOpacity, Dimensions } from 'react-native';
 import { Icon } from 'expo';
+import { connect } from 'react-redux';
 
 import menuBackground from '../assets/background2.jpg';
 import MenuItem from './MenuItem';
@@ -9,20 +10,26 @@ import { menuItems } from './data'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default class Menu extends Component {
+class Menu extends Component {
   state = {
     top: new Animated.Value(SCREEN_HEIGHT)
   }
 
   componentDidMount() {
-    Animated.spring(this.state.top, {
-      toValue: 0,
-    }).start();
+    this.toggleMenu();
   }
 
-  closeMenu = () => {
-    Animated.spring(this.state.top, {
-      toValue: SCREEN_HEIGHT
+  componentDidUpdate() {
+    this.toggleMenu();
+  }
+
+
+  toggleMenu = () => {
+    const { top } = this.state;
+    const { menuState } = this.props;
+
+    Animated.spring(top, {
+      toValue: menuState === 'openMenu' ? 54 : SCREEN_HEIGHT,
     }).start();
   }
 
@@ -37,7 +44,7 @@ export default class Menu extends Component {
           <Subtitle>Babee</Subtitle>
         </Cover>
         <TouchableOpacity
-          onPress={this.closeMenu}
+          onPress={this.props.closeMenu}
           style={{
             position: 'absolute',
             left: '50%',
@@ -65,6 +72,18 @@ export default class Menu extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  menuState: state.menuState,
+});
+
+const mapDispatchToProps = dispatch => ({
+  closeMenu: () => dispatch({
+    type: "CLOSE_MENU"
+  })
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Menu);
+
 const Image = styled.Image`
   position: absolute;
   height: 100%;
@@ -83,14 +102,6 @@ const Subtitle = styled.Text`
   color: rgba(255,255,255, 0.5);
 `;
 
-const Container = styled.View`
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      z-index: 2;
-      background: white;
-    `;
-
 const CloseView = styled.View`
   height: 44px;
   width: 44px;
@@ -100,6 +111,18 @@ const CloseView = styled.View`
   align-items: center;
   box-shadow: 0 5px 10px rgba(0,0,0, 0.15);
 `;
+
+
+const Container = styled.View`
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 2;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    `;
+
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
 
