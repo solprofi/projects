@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { ScrollView, SafeAreaView, TouchableOpacity, Animated, Easing, StatusBar } from 'react-native';
 import styled from 'styled-components';
 import { Icon } from 'expo';
 import { connect } from 'react-redux';
+import gql from 'graphql-tag';
+
 
 import Card from '../components/Card';
 import { logos, cards, courses } from '../components/data';
@@ -10,6 +12,40 @@ import Logo from '../components/Logo';
 import Course from '../components/Course';
 import Menu from '../components/Menu';
 import Avatar from '../components/Avatar';
+import { Query } from 'react-apollo';
+
+const CardsQuery = gql`
+  {
+    cardsCollection {
+      items {
+        title
+        subtitle
+        image {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+        subtitle
+        caption
+        logo {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+      }
+    }
+  }
+`;
 
 class HomeScreen extends Component {
   static navigationOptions = {
@@ -114,31 +150,46 @@ class HomeScreen extends Component {
                 ))}
               </ScrollView>
 
-
               <Subtitle>Continue Learning</Subtitle>
               <ScrollView
                 horizontal
                 style={{ paddingBottom: 30 }}
                 showsHorizontalScrollIndicator={false}
               >
+                <Query query={CardsQuery}>
+                  {({ loading, error, data }) => {
+                    if (error) {
+                      return <Message>Error...</Message>;
+                    } else if (loading) {
+                      return <Message>Loading...</Message>;
+                    } else {
+                      return (
+                        <Fragment>
+                          {data.cardsCollection.items.map(card => (
+                            <TouchableOpacity
+                              key={card.title}
+                              onPress={() => this.props.navigation.push('Section', { section: card })}
+                            >
+                              <Card
+                                background={card.image}
+                                title={card.title}
+                                logo={card.logo}
+                                caption={card.caption}
+                                subtitle={card.subtitle}
+                              />
+                            </TouchableOpacity>
+                          ))}
+                        </Fragment>
+                      )
+                    }
+                  }}
+                </Query>
 
-                {cards.map(card => (
-                  <TouchableOpacity key={card.title} onPress={() => this.props.navigation.push('Section')}>
-                    <Card
-                      background={card.background}
-                      title={card.title}
-                      logo={card.logo}
-                      caption={card.caption}
-                      subtitle={card.subtitle}
-                    />
-                  </TouchableOpacity>
-                ))}
+
               </ScrollView>
 
               <Subtitle>Popular Courses</Subtitle>
-
               <ScrollView
-
                 style={{ paddingBottom: 30 }}
                 showsHorizontalScrollIndicator={false}
               >
@@ -159,7 +210,7 @@ class HomeScreen extends Component {
             </ScrollView>
           </SafeAreaView>
         </AnimatedContainer>
-      </RootContainer>
+      </RootContainer >
     );
   }
 }
@@ -179,6 +230,13 @@ export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
 const RootContainer = styled.View`
   flex: 1;
   background: black;
+`;
+
+const Message = styled.Text`
+  margin: 20px;
+  color: #B8BECE;
+  font-weight: 500;
+  font-size: 15px;
 `;
 
 const Subtitle = styled.Text`
