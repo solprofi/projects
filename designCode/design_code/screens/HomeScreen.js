@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { ScrollView, SafeAreaView, TouchableOpacity, Animated, Easing, StatusBar } from 'react-native';
+import { ScrollView, SafeAreaView, TouchableOpacity, Animated, Easing, StatusBar, Platform } from 'react-native';
 import styled from 'styled-components';
 import { Icon } from 'expo';
 import { connect } from 'react-redux';
@@ -69,6 +69,10 @@ class HomeScreen extends Component {
           user: res,
         })
       });
+
+    if (Platform.OS === 'android') {
+      StatusBar.setBarStyle('light-content', true);
+    }
   }
 
 
@@ -139,7 +143,7 @@ class HomeScreen extends Component {
 
               <ScrollView
                 horizontal
-                showsHorizontalScrollIndicator="false"
+                showsHorizontalScrollIndicator={false}
                 style={{ padding: 20, paddingLeft: 12 }}
               >
                 {logos.map(logo => (
@@ -154,7 +158,7 @@ class HomeScreen extends Component {
               <Subtitle>Continue Learning</Subtitle>
               <ScrollView
                 horizontal
-                style={{ paddingBottom: 30 }}
+                style={{ paddingBottom: 30, paddingLeft: 10 }}
                 showsHorizontalScrollIndicator={false}
               >
                 <Query query={CardsQuery}>
@@ -190,9 +194,7 @@ class HomeScreen extends Component {
               </ScrollView>
 
               <Subtitle>Popular Courses</Subtitle>
-              <ScrollView
-                style={{ paddingBottom: 30 }}
-                showsHorizontalScrollIndicator={false}
+              <CoursesContainer
               >
                 {courses.map(course => (
                   <Course
@@ -206,7 +208,7 @@ class HomeScreen extends Component {
                     caption={course.caption}
                   />
                 ))}
-              </ScrollView>
+              </CoursesContainer>
 
             </ScrollView>
           </SafeAreaView>
@@ -231,6 +233,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
 const RootContainer = styled.View`
   flex: 1;
   background: black;
+`;
+
+const CoursesContainer = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-left: 10px;
 `;
 
 const Message = styled.Text`

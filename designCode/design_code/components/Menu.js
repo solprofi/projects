@@ -9,6 +9,11 @@ import MenuItem from './MenuItem';
 import { menuItems } from './data'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get('window').width;
+let cardWidth = SCREEN_WIDTH;
+if (SCREEN_WIDTH > 500) {
+  cardWidth = 500;
+}
 
 class Menu extends Component {
   state = {
@@ -114,13 +119,14 @@ const CloseView = styled.View`
 
 
 const Container = styled.View`
-      width: 100%;
+      width: ${cardWidth};
       height: 100%;
       position: absolute;
       z-index: 2;
       background: white;
       border-radius: 10px;
       overflow: hidden;
+      align-self: center;
     `;
 
 

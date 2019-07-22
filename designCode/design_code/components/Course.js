@@ -1,33 +1,65 @@
 
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
+import { Dimensions } from 'react-native';
 
-const Course = ({
-  background, title, logo, caption, subtitle, author, avatar,
-}) => (
-  <Container>
-      <Cover>
-        <Background source={background} />
-        <Logo source={logo} resizeMode="contain" />
-        <Subtitle>{subtitle}</Subtitle>
-        <Title>
-          {' '}
-          {title}
-        </Title>
-      </Cover>
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
-      <Content>
-        <Avatar source={avatar} />
-        <Caption>{caption}</Caption>
-        <Author>
-          Taught by
-          {' '}
-          {author}
-        </Author>
-      </Content>
-    </Container>
-);
+const getCourseWidth = screenWidth => {
+  let cardWidth = screenWidth - 40;
+  if (screenWidth >= 768 && screenWidth < 1024) {
+    cardWidth = (screenWidth - 60) / 2;
+  } else if (screenWidth >= 1024) {
+    cardWidth = (screenWidth - 80) / 3;
+  }
 
+  return cardWidth;
+}
+class Course extends Component {
+  state = {
+    cardWidth: getCourseWidth(SCREEN_WIDTH)
+  }
+
+  componentDidMount() {
+    Dimensions.addEventListener('change', this.adaptLayout);
+  }
+
+  adaptLayout = dimensions => {
+    this.setState({
+      cardWidth: getCourseWidth(dimensions.window.width)
+    })
+  }
+
+  render() {
+    const {
+      background, title, logo, caption, subtitle, author, avatar,
+    } = this.props;
+
+    return (
+      <Container style={{ width: this.state.cardWidth, elevation: 10 }}>
+        <Cover>
+          <Background source={background} />
+          <Logo source={logo} resizeMode="contain" />
+          <Subtitle>{subtitle}</Subtitle>
+          <Title>
+            {' '}
+            {title}
+          </Title>
+        </Cover>
+
+        <Content>
+          <Avatar source={avatar} />
+          <Caption>{caption}</Caption>
+          <Author>
+            Taught by
+            {' '}
+            {author}
+          </Author>
+        </Content>
+      </Container>
+    );
+  }
+}
 export default Course;
 
 const Container = styled.View`
@@ -35,7 +67,7 @@ const Container = styled.View`
   height: 335px;
   position: relative;
   background: white;
-  margin: 20px auto;
+  margin: 10px 10px;
   border-radius: 14px;
   box-shadow: 0 10px 15px rgba(0,0,0,0.20);
 `;
