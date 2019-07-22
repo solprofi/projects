@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, StatusBar } from 'react-native';
+import {
+  StatusBar, WebView, Linking, ScrollView,
+} from 'react-native';
 import styled from 'styled-components';
 import { Icon } from 'expo';
+import Markdown from 'react-native-showdown';
 
 export default class SectionScreen extends Component {
   componentDidMount() {
@@ -17,31 +20,54 @@ export default class SectionScreen extends Component {
 
     const section = navigation.getParam('section');
     const {
-      background,
+      image,
       title,
       caption,
       logo,
       subtitle,
+      content,
     } = section;
 
-    console.log(logo);
-
     return (
-      <Container>
-        <StatusBar hidden />
-        <Cover>
-          <Image source={background} />
-          <Wrapper>
-            <Logo source={logo} />
-            <Subtitle>{subtitle}</Subtitle>
-          </Wrapper>
-          <Title>{title}</Title>
-          <Caption>{caption}</Caption>
-        </Cover>
-        <CloseView onPress={() => navigation.goBack()}>
-          <Icon.Ionicons name="ios-close" size={36} color="#4775f2" />
-        </CloseView>
-      </Container>
+      <ScrollView>
+        <Container>
+          <StatusBar hidden />
+          <Cover>
+            <Image source={image} />
+            <Wrapper>
+              <Logo source={logo} />
+              <Subtitle>{subtitle}</Subtitle>
+            </Wrapper>
+            <Title>{title}</Title>
+            <Caption>{caption}</Caption>
+          </Cover>
+          <CloseView onPress={() => navigation.goBack()}>
+            <Icon.Ionicons name="ios-close" size={36} color="#4775f2" />
+          </CloseView>
+          <Content>
+            {/* <WebView
+            source={{ html: content + htmlStyles }}
+            scalesPageToFit={false}
+            scrollEnabled={false}
+            ref="webview"
+            onNavigationStateChange={(event) => {
+              const { url } = event;
+
+              if (url !== 'about:blank') {
+                this.refs.webview.stopLoading();
+                Linking.openURL(event.url);
+              }
+            }}
+          /> */}
+            <Markdown
+              body={content}
+              pureCSS={htmlStyles}
+              scalesPageToFit={false}
+              scrollEnabled={false}
+            />
+          </Content>
+        </Container>
+      </ScrollView>
     );
   }
 }
@@ -49,6 +75,67 @@ export default class SectionScreen extends Component {
 SectionScreen.navigationOptions = {
   header: null,
 };
+
+const htmlContent = `
+<h2>This is a title</h2>
+<p>This <strong>is</strong> a <a href="http://designcode.io">link</a></p>
+<img src="https://cl.ly/c0b07504bfec/download/background4.jpg" />
+`;
+
+const htmlStyles = `
+  * {
+    font-family: -apple-system, Roboto;
+    margin: 0;
+    padding: 0;
+    font-size: 17px;
+    font-weight: normal;
+    color: #3c4560;
+    line-height: 24px;
+  }
+   h2 {
+    font-size: 20px;
+    text-transform: uppercase;
+    color: #b8bece;
+    font-weight: 600;
+    margin-top: 50px;
+  }
+
+  p {
+    margin-top: 20px;
+  }
+
+  a {
+    color: #4775f2;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+   img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+   pre {
+    padding: 20px;
+    background: #212C4F;
+    overflow: hidden;
+    word-wrap: break-word;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  
+  code {
+    color: white;
+  }
+`;
+
+const Content = styled.View`
+  height: 1000px;
+  padding: 12px;
+`;
 
 const Wrapper = styled.View`
   flex-direction: row;
