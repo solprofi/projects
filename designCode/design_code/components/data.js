@@ -141,4 +141,18 @@ export const projects = [
     text:
       "Recently finished the React course by @Mengto, and I 10/10 would recommend. I already rewrote my personal website in @reactjs and I'm very excited with it.",
   },
+  {
+    title: 'What it do babee',
+    image: require('../assets/background3.jpg'),
+    author: 'Kawhy?',
+    text:
+      "Recently finished the React course by @Mengto, and I 10/10 would recommend. I already rewrote my personal website in @reactjs and I'm very excited with it.",
+  },
+  {
+    title: 'Very well mmm',
+    image: require('../assets/background1.jpg'),
+    author: 'Who dat boi',
+    text:
+      "Recently finished the React course by @Mengto, and I 10/10 would recommend. I already rewrote my personal website in @reactjs and I'm very excited with it.",
+  },
 ];
