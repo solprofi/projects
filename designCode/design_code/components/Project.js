@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import { Animated, TouchableWithoutFeedback, Dimensions, StatusBar } from 'react-native'
 import styled from 'styled-components';
-import { Icon } from 'expo';
+import { Icon, LinearGradient } from 'expo';
+import { connect } from 'react-redux';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-export default class Project extends Component {
+class Project extends Component {
   state = {
     cardWidth: new Animated.Value(315),
     cardHeight: new Animated.Value(460),
     titleTop: new Animated.Value(20),
     opacity: new Animated.Value(0),
+    textHeight: new Animated.Value(100),
   }
 
   spring = (param, value) => {
@@ -19,20 +21,32 @@ export default class Project extends Component {
     }).start();
   }
 
+  timing = (param, value, config) => {
+    Animated.timing(param, {
+      ...config,
+      toValue: value,
+    }).start();
+  }
+
   openCard = () => {
-    const {
-      cardWidth,
-      cardHeight,
-      titleTop,
-      opacity,
-    } = this.state;
+    if (this.props.canBeOpened) {
+      const {
+        cardWidth,
+        cardHeight,
+        titleTop,
+        opacity,
+        textHeight,
+      } = this.state;
 
-    this.spring(cardWidth, SCREEN_WIDTH);
-    this.spring(cardHeight, SCREEN_HEIGHT);
-    this.spring(titleTop, 80);
-    this.spring(opacity, 1);
+      this.timing(cardWidth, SCREEN_WIDTH, { duration: 150 });
+      this.timing(cardHeight, SCREEN_HEIGHT, { duration: 150 });
+      this.spring(titleTop, 80);
+      this.spring(opacity, 1);
+      this.spring(textHeight, 1000);
 
-    StatusBar.setHidden(true);
+      StatusBar.setHidden(true);
+      this.props.openCard();
+    }
   }
 
   closeCard = () => {
@@ -41,15 +55,17 @@ export default class Project extends Component {
       cardHeight,
       titleTop,
       opacity,
+      textHeight,
     } = this.state;
 
-    this.spring(cardWidth, 315);
-    this.spring(cardHeight, 560);
+    this.timing(cardWidth, 315, { duration: 250 });
+    this.timing(cardHeight, 460, { duration: 250 });
     this.spring(titleTop, 20);
     this.spring(opacity, 0);
-
+    this.spring(textHeight, 100);
 
     StatusBar.setHidden(false);
+    this.props.closeCard();
   }
 
   render() {
@@ -58,6 +74,7 @@ export default class Project extends Component {
       cardHeight,
       titleTop,
       opacity,
+      textHeight,
     } = this.state;
     const {
       image,
@@ -80,7 +97,16 @@ export default class Project extends Component {
               {author}
             </Author>
           </Cover>
-          <Text>{text}</Text>
+          <AnimatedText style={{ height: textHeight }}>{text}</AnimatedText>
+          <AnimatedLinearGradient
+            colors={["rgba(255,255,255,0)", "rgba(255,255,255,1)"]}
+            style={{
+              position: "absolute",
+              top: 330,
+              width: "100%",
+              height: textHeight,
+            }}
+          />
           <AnimatedCloseView onPress={this.closeCard} style={{ opacity, top: titleTop }}>
             <Icon.Ionicons name='ios-close' size={32} color='#546bfb' />
           </AnimatedCloseView>
@@ -90,6 +116,18 @@ export default class Project extends Component {
   }
 }
 
+const mapStateToProps = state => ({ projectCardState: state.projectCardState });
+
+const mapDispatchToProps = dispatch => ({
+  openCard: () => dispatch({
+    type: 'OPEN_CARD',
+  }),
+  closeCard: () => dispatch({
+    type: 'CLOSE_CARD',
+  }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Project);
 
 const Container = styled.View`
     width: 315px;
@@ -100,6 +138,8 @@ const Container = styled.View`
     `;
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
+
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 const CloseView = styled.TouchableOpacity`
       width: 32px;
@@ -154,3 +194,5 @@ const Text = styled.Text`
     line-height: 24px;
     color: #3c4560;
     `;
+
+const AnimatedText = Animated.createAnimatedComponent(Text);

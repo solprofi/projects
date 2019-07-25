@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Animated, PanResponder } from 'react-native';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
 import Project from '../components/Project';
 import { projects } from '../components/data';
@@ -9,7 +10,11 @@ const getNextCardIndex = index => {
   return (index++) % projects.length;
 }
 
-export default class ProjectsScreen extends Component {
+class ProjectsScreen extends Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -18,6 +23,7 @@ export default class ProjectsScreen extends Component {
       translateY: new Animated.Value(44),
       thirdCardScale: new Animated.Value(0.8),
       thirdCardTranslateY: new Animated.Value(-50),
+      opacity: new Animated.Value(0),
       activeCardIndex: 0,
     };
 
@@ -28,17 +34,24 @@ export default class ProjectsScreen extends Component {
       translateY,
       thirdCardScale,
       thirdCardTranslateY,
-      activeCardIndex,
+      opacity,
     } = this.state;
 
     this._panResponder = PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-
+      onMoveShouldSetPanResponder: (event, gestureState) => {
+        if (gestureState.dx === 0 && gestureState.dy === 0) {
+          return false;
+        } else if (this.props.projectCardState === 'openCard') {
+          return false;
+        }
+        return true;
+      },
       onPanResponderGrant: () => {
         this.spring(scale, 1);
         this.spring(translateY, 0);
         this.spring(thirdCardScale, 0.9);
         this.spring(thirdCardTranslateY, 44);
+        this.spring(opacity, 1);
       },
 
       onPanResponderMove: Animated.event([
@@ -73,6 +86,7 @@ export default class ProjectsScreen extends Component {
           this.spring(translateY, 44);
           this.spring(thirdCardScale, 0.8);
           this.spring(thirdCardTranslateY, -50);
+          this.spring(opacity, 0);
         }
       },
     });
@@ -92,10 +106,12 @@ export default class ProjectsScreen extends Component {
       thirdCardScale,
       thirdCardTranslateY,
       activeCardIndex,
+      opacity,
     } = this.state;
 
     return (
       <Container>
+        <AnimatedBackground style={{ opacity }} />
         <Animated.View
           style={{
             transform: [
@@ -110,6 +126,7 @@ export default class ProjectsScreen extends Component {
             image={projects[activeCardIndex].image}
             author={projects[activeCardIndex].author}
             text={projects[activeCardIndex].text}
+            canBeOpened
           />
         </Animated.View>
         <Animated.View style={{
@@ -157,9 +174,23 @@ export default class ProjectsScreen extends Component {
   }
 }
 
+const mapStateToProps = state => ({ projectCardState: state.projectCardState });
+
+export default connect(mapStateToProps)(ProjectsScreen);
+
 ProjectsScreen.navigationOptions = {
   header: null,
 };
+
+const Background = styled.View`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: rgba(0,0,0, 0.2);
+  z-index: -3;
+`;
+
+const AnimatedBackground = Animated.createAnimatedComponent(Background);
 
 const Container = styled.View`
   flex: 1;

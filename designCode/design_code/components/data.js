@@ -125,7 +125,8 @@ export const projects = [
     image: require('../assets/background5.jpg'),
     author: 'Liu Yi',
     text:
-      'Thanks to Design+Code, I improved my design skill and learned to do animations for my app Price Tag, a top news app in China.',
+      'Thanks to Design+Code, I improved my design skill and learned to do animations for my app Price Tag, a top news app in China. asdasdasdasdaqwe asdqwe asd qwe  asd q asd qwe asd \n'
+      + 'Thanks to Design+Code, I improved my design skill and learned to do animations for my app Price Tag, a top news app in China.',
   },
   {
     title: 'The DM App - Ananoumous Chat',

@@ -16,6 +16,7 @@ const client = new ApolloClient({
 
 const initialState = {
   menuState: '',
+  projectCardState: '',
 };
 
 
@@ -33,7 +34,18 @@ const rootReducer = (state = initialState, action) => {
         menuState: 'openMenu',
       };
     }
-
+    case 'OPEN_CARD': {
+      return {
+        ...state,
+        projectCardState: 'openCard',
+      };
+    }
+    case 'CLOSE_CARD': {
+      return {
+        ...state,
+        projectCardState: 'closeCard',
+      };
+    }
     default: {
       return state;
     }
